@@ -6,6 +6,7 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [welcomeMessage, setWelcomeMessage] = useState("");
+  const [userData, setUserData] = useState<{ nombrecompleto: string; numerodeboleto: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,15 +29,18 @@ export default function Home() {
   
       if (response.ok) {
         setWelcomeMessage(`Bienvenido, ${data.nombrecompleto}, disfruta tu experiencia en GreenPark.`);
+        setUserData({ nombrecompleto: data.nombrecompleto, numerodeboleto: data.numerodeboleto });
         setError("");
       } else {
         setError("Los datos son incorrectos. Por favor, inténtalo de nuevo.");
         setWelcomeMessage("");
+        setUserData(null);
       }
     } catch (err) {
       console.error("Error:", err); // Debugging
       setError("Ocurrió un error al conectar con el servidor. Por favor, inténtalo más tarde.");
       setWelcomeMessage("");
+      setUserData(null);
     }
   };
 
@@ -59,7 +63,11 @@ export default function Home() {
         fontFamily: "Arial, sans-serif",
       }}>
         {welcomeMessage ? (
-          <h1>{welcomeMessage}</h1>
+          <div>
+            <h1>{welcomeMessage}</h1>
+            <p><strong>Nombre Completo:</strong> {userData?.nombrecompleto}</p>
+            <p><strong>Número de Boleto:</strong> {userData?.numerodeboleto}</p>
+          </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "15px" }}>
