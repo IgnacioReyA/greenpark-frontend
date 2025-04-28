@@ -9,14 +9,24 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     try {
-      const response = await fetch(`http://localhost:8080/api/auth?usuario=${encodeURIComponent(username)}&contrasena=${encodeURIComponent(password)}`, {
-        method: 'GET',
+      const response = await fetch("http://localhost:8080/api/auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          usuario: username,
+          contrasena: password,
+        }),
       });
-
+  
+      console.log("Response status:", response.status); // Debugging
+      const data = await response.json();
+      console.log("Response data:", data); // Debugging
+  
       if (response.ok) {
-        const data = await response.json();
         setWelcomeMessage(`Bienvenido, ${data.nombrecompleto}, disfruta tu experiencia en GreenPark.`);
         setError("");
       } else {
@@ -24,6 +34,7 @@ export default function Home() {
         setWelcomeMessage("");
       }
     } catch (err) {
+      console.error("Error:", err); // Debugging
       setError("Ocurrió un error al conectar con el servidor. Por favor, inténtalo más tarde.");
       setWelcomeMessage("");
     }
